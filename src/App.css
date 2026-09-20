@@ -89,6 +89,10 @@
   background: var(--surface);
 }
 
+.apod-media {
+  position: relative;
+}
+
 .apod-media img,
 .apod-media iframe {
   width: 100%;
@@ -96,6 +100,19 @@
   aspect-ratio: 16 / 10;
   object-fit: cover;
   border: 0;
+}
+
+.hd-link {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  border: 1px solid var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--accent);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+  text-decoration: none;
 }
 
 .apod-info {

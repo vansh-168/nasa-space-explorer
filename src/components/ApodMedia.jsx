@@ -9,7 +9,12 @@ export default function ApodMedia({ apod }) {
 
   return (
     <div className="apod-media">
-      <img src={apod.hdurl || apod.url} alt={apod.title} loading="lazy" />
+      <img src={apod.url} alt={apod.title} loading="lazy" />
+      {apod.hdurl && (
+        <a className="hd-link" href={apod.hdurl} target="_blank" rel="noopener noreferrer">
+          View full resolution
+        </a>
+      )}
     </div>
   )
 }

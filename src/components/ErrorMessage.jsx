@@ -1,12 +1,15 @@
-export default function ErrorMessage({ message, onRetry }) {
+export default function ErrorMessage({ message, onRetry, children }) {
   return (
-    <div className="status-message status-error" role="alert">
+    <div className="status-card" role="alert">
       <p>{message}</p>
-      {onRetry && (
-        <button type="button" onClick={onRetry}>
-          Try again
-        </button>
-      )}
+      <div className="status-actions">
+        {onRetry && (
+          <button type="button" className="pill-btn" onClick={onRetry}>
+            Try again
+          </button>
+        )}
+        {children}
+      </div>
     </div>
   )
 }

@@ -1,16 +1,43 @@
-# React + Vite
+# Space Explorer
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A React app for browsing NASA's **Astronomy Picture of the Day** (APOD): today's picture, any day back to 16 June 1995, a gallery of recent pictures, random discoveries, and your own saved favourites.
 
-Currently, two official plugins are available:
+**Live:** https://nasa-space-explorer-tan.vercel.app
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+- **Daily picture** with NASA's full explanation and credits, and a link to the full-resolution image
+- **Date navigation:** ‹ › buttons, a date picker, ← → keyboard shortcuts, and a "Latest" button
+- **Surprise me:** a random picture from the whole 30-year archive (or press **R**)
+- **Gallery:** recent pictures as a grid, 24 at a time, with "Load older pictures"
+- **Saved:** star pictures to keep them (stored in your browser)
+- **Shareable links:** every picture has its own URL (`?date=YYYY-MM-DD`), with a Share button
+- Plays APOD's video days (YouTube embeds), with a fallback for formats that can't be shown
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Data source
 
-## Expanding the Oxlint configuration
+Pictures come from NASA Science's APOD feed:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+```
+https://science.nasa.gov/wp-json/wp/v2/apod-basic/<YYMMDD>      one day
+https://science.nasa.gov/wp-json/wp/v2/apod-basic?per_page=&page= newest first
+```
+
+No API key is needed. The older `api.nasa.gov/planetary/apod` endpoint is **not** used: since APOD moved from apod.nasa.gov to science.nasa.gov, it returns a "NASA Science" logo placeholder for every date.
+
+Images are served from `assets.science.nasa.gov`. Paths under `/dynamicimage/` accept `?w=<width>`, which the app uses for small gallery thumbnails and responsive images.
+
+## Development
+
+```bash
+npm install
+npm run dev      # http://localhost:5173
+npm run lint
+npm run build
+```
+
+Built with React 19 and Vite. All feed HTML (explanations and credits) is sanitized before rendering (`src/utils/sanitizeHtml.js`).
+
+---
+
+An independent project, not affiliated with NASA. Each image belongs to its credited creator.

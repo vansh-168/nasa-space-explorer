@@ -1,42 +1,33 @@
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --surface: #f8f7fb;
-  --border: #e5e4e7;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --error: #d64545;
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --bg: #05060a;
+  --bg-raised: #0c0e16;
+  --surface: rgba(255, 255, 255, 0.045);
+  --surface-hover: rgba(255, 255, 255, 0.085);
+  --line: rgba(255, 255, 255, 0.1);
+  --line-strong: rgba(255, 255, 255, 0.22);
+  --text: #e9ecf4;
+  --text-soft: #c9cfdd;
+  --muted: #949db2;
+  --accent: #ffc46b;
+  --accent-ink: #1c1306;
+  --accent-soft: rgba(255, 196, 107, 0.14);
+  --error: #ff9a8a;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --serif: 'Instrument Serif', 'Iowan Old Style', Georgia, serif;
+  --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 
-  font: 16px/1.5 var(--sans);
-  color-scheme: light dark;
+  --radius: 14px;
+  --max: 1240px;
+  --gutter: clamp(16px, 4vw, 40px);
+
+  font: 16px/1.55 var(--sans);
   color: var(--text);
   background: var(--bg);
+  color-scheme: dark;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --surface: #1f2028;
-    --border: #2e303a;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --error: #f28b8b;
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
 }
 
 * {
@@ -45,6 +36,27 @@
 
 body {
   margin: 0;
+  min-width: 320px;
+  background: var(--bg);
+}
+
+/* Starfield + faint nebula glow, fixed behind everything */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(92, 112, 255, 0.16), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 100% 100%, rgba(255, 150, 90, 0.07), transparent 70%),
+    radial-gradient(1px 1px at 24px 36px, rgba(255, 255, 255, 0.55), transparent 60%),
+    radial-gradient(1px 1px at 140px 92px, rgba(255, 255, 255, 0.35), transparent 60%),
+    radial-gradient(1.4px 1.4px at 212px 168px, rgba(255, 255, 255, 0.5), transparent 60%),
+    radial-gradient(1px 1px at 78px 210px, rgba(255, 255, 255, 0.3), transparent 60%),
+    radial-gradient(1.2px 1.2px at 300px 40px, rgba(200, 215, 255, 0.45), transparent 60%),
+    radial-gradient(1px 1px at 330px 260px, rgba(255, 255, 255, 0.28), transparent 60%);
+  background-size: 100% 100%, 100% 100%, 360px 300px, 360px 300px, 360px 300px, 360px 300px, 360px 300px, 360px 300px;
 }
 
 #root {
@@ -54,24 +66,49 @@ body {
 }
 
 h1,
-h2 {
-  font-family: var(--sans);
-  font-weight: 600;
-  color: var(--text-h);
+h2,
+h3 {
   margin: 0;
+  color: var(--text);
 }
 
 p {
   margin: 0;
 }
 
+a {
+  color: inherit;
+}
+
 button {
   font: inherit;
+  color: inherit;
   cursor: pointer;
 }
 
-button:focus-visible,
-input:focus-visible {
+button:disabled {
+  cursor: not-allowed;
+}
+
+:focus-visible {
   outline: 2px solid var(--accent);
-  outline-offset: 2px;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }

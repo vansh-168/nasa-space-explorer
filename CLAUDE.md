@@ -4,40 +4,41 @@
 
 **Project Name:** NASA "Picture of the Day" Space Explorer  
 
-**Objective:** A React application that fetches high-resolution space imagery using NASA's Astronomy Picture of the Day (APOD) Open API. Features include date pickers, bookmarking/favorites functionality, and smooth modal overlays for explanations.
+**Objective:** A React application for browsing NASA's Astronomy Picture of the Day (APOD): daily picture with explanation, date navigation (buttons, picker, ← → keys), random picture, recent-pictures gallery, saved favorites, and shareable `?date=` links.
+
+**Data source (important):** `https://science.nasa.gov/wp-json/wp/v2/apod-basic` — `/<YYMMDD>` for one day, `?per_page=&page=` for newest-first lists (max 25 per page, `X-WP-Total` header = archive size). No API key; CORS allowed. Do NOT switch back to `api.nasa.gov/planetary/apod`: since APOD moved to science.nasa.gov it returns a "NASA Science" logo placeholder for every date. Feed HTML (explanation, credit) must go through `src/utils/sanitizeHtml.js` before rendering.
+
+**Dates:** APOD's "today" is US Eastern time (`todayIso()`); date math must stay in UTC (`addDays()`), otherwise timezones ahead of UTC (e.g. India) skip days.
 
 
 ---
 ## Project Structure
 ```text
 nasa-space-explorer/
-├── .gitignore
-├── .oxlintrc.json
-├── CLAUDE.md
-├── README.md
-├── index.html
-├── package.json
-├── package-lock.json
-├── vite.config.js
-├── public/
-│   ├── favicon.svg
-│   └── icons.svg
+├── index.html              # title, meta/OG tags, fonts
+├── public/favicon.svg
 └── src/
-    ├── main.jsx        # entry point, mounts <App/>
-    ├── App.jsx         # Main application container / component tree
-    ├── App.css
-    ├── index.css
-    └── assets/
-        ├── hero.png
-        ├── react.svg
-        └── vite.svg
+    ├── main.jsx            # entry point, mounts <App/>
+    ├── App.jsx             # state, URL sync, keyboard shortcuts, share, random
+    ├── App.css             # component styles (dark theme)
+    ├── index.css           # design tokens, starfield background, base styles
+    ├── api/apod.js         # science.nasa.gov feed: getApod, getLatest, getRecent, getRandom, resizeImage
+    ├── hooks/
+    │   ├── useApod.js      # one day (null = latest), derived loading state
+    │   ├── useGallery.js   # paged recent pictures
+    │   └── useFavorites.js # localStorage favorites (+ upgrades old saved format)
+    ├── utils/
+    │   ├── date.js         # todayIso (US Eastern), addDays (UTC), formatters
+    │   └── sanitizeHtml.js # allow-list sanitizer for feed HTML
+    └── components/         # Header, DateControls, ApodViewer, ApodMedia, ViewerSkeleton,
+                            # Gallery, FavoritesPanel, ErrorMessage, Footer
 ```
-    
+
 ## Technical Stack
-- **Framework:** [e.g., React, Next.js, Node.js, Python]
-- **State/Data:** [e.g., Redux, Zustand, React Query, Prisma]
-- **Styling:** [e.g., Tailwind CSS, CSS Modules, Styled Components]
-- **Testing:** [e.g., Jest, Vitest, Cypress, Playwright]
+- **Framework:** React 19 + Vite
+- **State/Data:** React hooks only (no state library); in-memory cache in `api/apod.js`
+- **Styling:** Plain CSS with custom properties (Instrument Serif + Inter)
+- **Testing:** none yet — verify in the browser (including a non-US timezone)
 
 ---
 

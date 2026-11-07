@@ -1,34 +1,39 @@
 import { useCallback, useEffect, useState } from 'react'
-import { getApod } from '../api/apod'
+import { getApod, getLatest } from '../api/apod'
 
+// date = null loads the most recent picture NASA has published.
+// Loading is derived (the stored result belongs to an older request),
+// so no state is set synchronously inside the effect.
 export function useApod(date) {
-  const [data, setData] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
   const [retryCount, setRetryCount] = useState(0)
+  const [result, setResult] = useState({ key: null, data: null, error: null })
+  const [latestDate, setLatestDate] = useState(null)
+  const key = `${date ?? 'latest'}#${retryCount}`
 
   useEffect(() => {
     let ignore = false
-    setLoading(true)
-    setError(null)
-
-    getApod(date)
-      .then((result) => {
-        if (!ignore) setData(result)
+    ;(date ? getApod(date) : getLatest())
+      .then((data) => {
+        if (ignore) return
+        if (!date) setLatestDate(data.date)
+        setResult({ key, data, error: null })
       })
       .catch((err) => {
-        if (!ignore) setError(err.message)
+        if (!ignore) setResult({ key, data: null, error: err.message })
       })
-      .finally(() => {
-        if (!ignore) setLoading(false)
-      })
-
     return () => {
       ignore = true
     }
-  }, [date, retryCount])
+  }, [date, key])
 
   const refetch = useCallback(() => setRetryCount((count) => count + 1), [])
+  const loading = result.key !== key
 
-  return { data, loading, error, refetch }
+  return {
+    data: loading ? null : result.data,
+    error: loading ? null : result.error,
+    loading,
+    latestDate,
+    refetch,
+  }
 }

@@ -1,41 +1,70 @@
-export default function FavoritesPanel({ favorites, onSelect, onRemove, onClose }) {
+import { useEffect, useRef, useState } from 'react'
+import { formatShortDate } from '../utils/date'
+
+function SavedThumb({ fav }) {
+  const [broken, setBroken] = useState(false)
+  if (fav.thumbUrl && !broken) {
+    return <img className="saved-thumb" src={fav.thumbUrl} alt="" loading="lazy" onError={() => setBroken(true)} />
+  }
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div
-        className="modal favorites-panel"
+    <span className="saved-thumb saved-thumb-empty" aria-hidden="true">
+      {fav.mediaType === 'video' ? '▶' : '✦'}
+    </span>
+  )
+}
+
+export default function FavoritesPanel({ favorites, onSelect, onRemove, onClose }) {
+  const panelRef = useRef(null)
+
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      if (event.key === 'Escape') onClose()
+    }
+    document.addEventListener('keydown', onKeyDown)
+    const previouslyFocused = document.activeElement
+    panelRef.current?.focus()
+    return () => {
+      document.removeEventListener('keydown', onKeyDown)
+      previouslyFocused?.focus?.()
+    }
+  }, [onClose])
+
+  return (
+    <div className="drawer-overlay" onClick={onClose}>
+      <aside
+        className="drawer"
         role="dialog"
         aria-modal="true"
-        aria-labelledby="favorites-title"
+        aria-labelledby="saved-title"
+        ref={panelRef}
+        tabIndex={-1}
         onClick={(event) => event.stopPropagation()}
       >
-        <button type="button" className="modal-close" onClick={onClose} aria-label="Close">
-          ×
-        </button>
-        <h2 id="favorites-title">Favorites</h2>
+        <div className="drawer-head">
+          <h2 id="saved-title">Saved pictures</h2>
+          <button type="button" className="icon-btn" onClick={onClose} aria-label="Close">
+            ×
+          </button>
+        </div>
+
         {favorites.length === 0 ? (
-          <p>No favorites yet. Star a picture to save it here.</p>
+          <p className="drawer-empty">Nothing saved yet. Press ☆ Save on any picture to keep it here.</p>
         ) : (
-          <ul className="favorites-list">
+          <ul className="saved-list">
             {favorites.map((fav) => (
               <li key={fav.date}>
-                <button type="button" className="favorites-item" onClick={() => onSelect(fav.date)}>
-                  {fav.media_type === 'video' ? (
-                    <span className="favorites-thumb favorites-thumb-video" aria-hidden="true">
-                      ▶
-                    </span>
-                  ) : (
-                    <img className="favorites-thumb" src={fav.url} alt="" />
-                  )}
-                  <span>
+                <button type="button" className="saved-item" onClick={() => onSelect(fav.date)}>
+                  <SavedThumb fav={fav} />
+                  <span className="saved-text">
                     <strong>{fav.title}</strong>
-                    <small>{fav.date}</small>
+                    <small>{formatShortDate(fav.date)}</small>
                   </span>
                 </button>
                 <button
                   type="button"
-                  className="favorites-remove"
+                  className="icon-btn"
                   onClick={() => onRemove(fav.date)}
-                  aria-label={`Remove ${fav.title} from favorites`}
+                  aria-label={`Remove ${fav.title} from saved`}
                 >
                   ×
                 </button>
@@ -43,7 +72,7 @@ export default function FavoritesPanel({ favorites, onSelect, onRemove, onClose 
             ))}
           </ul>
         )}
-      </div>
+      </aside>
     </div>
   )
 }
